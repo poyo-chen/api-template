@@ -1,6 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
+import { UserDto } from './user.dto';
+import usersService from './users.service';
+import firestoreService from './firestore.service';
 
 const app = express();
 app.use(cors({ origin: true }));
@@ -12,24 +15,32 @@ app.use(
 );
 
 const stage = express.Router();
-const v1 = express.Router();
+// Middleware
+const myLogging = (req, res, next) => {
+  console.log('req: ', req.body);
+  next();
+};
+app.use(myLogging);
+
 app.use('/stage', stage);
-app.use('/v1', v1);
 
-stage.get('/hello', (req, res) => {
-  res.send('world!');
+stage.get('/data', async (req, res) => {
+  const users = await usersService.listAll();
+  res.send(users);
 });
 
-v1.get('/hello', (req, res) => {
-  res.send('world');
+stage.get('/data/:userId', async (req, res) => {
+  const users = await firestoreService.getById(req.params.userId);
+  res.send(users);
 });
 
-stage.post('/echo', (req, res) => {
-  res.status(200).json({ message: req.body.message }).end();
-});
-
-v1.post('/echo', (req, res) => {
-  res.status(200).json({ message: req.body.message }).end();
+stage.post('/data', async (req, res) => {
+  const obj = req.body;
+  const user: UserDto = { ...obj, id: new Date().getTime() };
+  await firestoreService.save(user);
+  // await usersService.create(user);
+  const users = await usersService.listAll();
+  res.status(200).send(users).end();
 });
 
 stage.get('/test', (req, res) => {

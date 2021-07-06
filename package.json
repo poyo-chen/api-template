@@ -2,13 +2,13 @@
   "name": "api-sample",
   "version": "1.0.2",
   "description": "Aiii API Sample",
-  "main": "lib/index.js",
+  "main": "lib/src/index.js",
   "config": {
     "image": "gcr.io/aiii-bot-platform/api-sample"
   },
   "scripts": {
     "start": "node lib/index.js",
-    "serve": "tsc && node lib/index.js",
+    "serve": "tsc && node lib/src/index.js",
     "lint": "eslint --fix ./src/**/*.ts",
     "format": "prettier --write src/**/*.ts",
     "prebuild": "npm run lint && npm run format",
@@ -26,7 +26,8 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "firebase-admin": "^9.10.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.6",
